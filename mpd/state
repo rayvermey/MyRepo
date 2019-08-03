@@ -1,0 +1,19 @@
+sw_volume: 84
+audio_device_state:1:mpd-alsa
+audio_device_state:1:toggle_visualizer
+state: pause
+current: 1
+time: 83.017000
+random: 0
+repeat: 0
+single: 0
+consume: 0
+crossfade: 0
+mixrampdb: 0.000000
+mixrampdelay: -1.000000
+playlist_begin
+0:Rock/Bloodhound Gang/Hooray for boobies/03. Mama's boy.mp3
+1:Rock/Bloodhound Gang/Hooray for boobies/02. The inevitable return of the great white dope.mp3
+2:Rock/Rammstein/Mutter/11 - Nebel.mp3
+3:Rock/Rammstein/Megamix_Rammstein_-_PussyDeluxe/Rammstein - Pussy Deluxe Mix.mp3
+playlist_end

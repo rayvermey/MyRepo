@@ -1,0 +1,1 @@
+conky -c /home/ray/.config/conky/TP-Troll-rings-4-cores-LUA.conkyrc & sleep 1s

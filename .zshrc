@@ -1,14 +1,15 @@
 # If you come from bash you might have to change your $PATH.
-# export PATH=$HOME/bin:/usr/local/bin:$PATH
+export PATH=$HOME/bin:/usr/local/bin:$PATH:$HOME/scripts:
 
 # Path to your oh-my-zsh installation.
-  export ZSH="/home/ray/.oh-my-zsh"
+export ZSH="/home/ray/.oh-my-zsh"
 
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
 # See https://github.com/robbyrussell/oh-my-zsh/wiki/Themes
 ZSH_THEME="powerlevel9k/powerlevel9k"
+#ZSH_THEME="jonathan"
 
 # Set list of themes to pick from when loading at random
 # Setting this variable when ZSH_THEME=random will cause zsh to load
@@ -91,7 +92,7 @@ export LANG=en_US.UTF-8
 # export ARCHFLAGS="-arch x86_64"
 
 # ssh
-# export SSH_KEY_PATH="~/.ssh/rsa_id"
+export SSH_KEY_PATH="~/.ssh/rsa_id"
 
 # Set personal aliases, overriding those provided by oh-my-zsh libs,
 # plugins, and themes. Aliases can be placed here, though oh-my-zsh
@@ -101,15 +102,23 @@ export LANG=en_US.UTF-8
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
-alias vi="vim"
-alias p="sudo pacman"
-alias r="ranger"
-<<<<<<< HEAD
-
-export CDPATH=/home/ray:/etc:/var:/opt
-=======
->>>>>>> 4462d7c0cff99bbe579cc66e3d20ab30ff9c427b
 #
+
+CDPATH=/home/ray:/etc:/var:/opt
+export CDPATH
+
+smartctl -q errorsonly -H -l selftest -l error /dev/sda
+smartctl -q errorsonly -H -l selftest -l error /dev/sdb
+smartctl -q errorsonly -H -l selftest -l error /dev/sdc
+smartctl -q errorsonly -H -l selftest -l error /dev/sdd
+
+
+PATH=$PATH:/home/ray/scripts
+
+#
+# tmux ssh aliases
+PS1='[\u@\h \W]\$ '
+
 
 # Powerline
  if [ -f /usr/share/powerline/bindings/bash/powerline.sh ]; then
@@ -119,6 +128,48 @@ export CDPATH=/home/ray:/etc:/var:/opt
 #
 # Commands
 #
-nohup /usr/bin/autokey-gtk >/dev/null 2>&1 &
-screenfetch
+if [ 'ps aux | grep autokey-gtk' ]
+then
+        :
+else
+       HOST=`hostname`
+       if [ $HOST=DESKTOP-RAY ]
+       then	       
+       	nohup /usr/bin/autokey-gtk >/dev/null 2>&1 &
+       fi
+fi
+
+# -------------------- .bashrc -------------------------
+
+#Ibus settings if you need them
+#type ibus-setup in terminal to change settings and start the daemon
+#delete the hashtags of the next lines and restart
+#export GTK_IM_MODULE=ibus
+#export XMODIFIERS=@im=dbus
+#export QT_IM_MODULE=ibus
+
+# If not running interactively, don't do anything
+[[ $- != *i* ]] && return
+
+export HISTCONTROL=ignoreboth:erasedups
+
+#PS1='[\u@\h \W]\$ '
+
+if [ -d "$HOME/.bin" ] ;
+	then PATH="$HOME/.bin:$PATH"
+fi
+
+#shopt
+#shopt -s autocd # change to named directory
+#shopt -s cdspell # autocorrects cd misspellings
+#shopt -s cmdhist # save multi-line commands in history as single line
+#shopt -s dotglob
+#shopt -s histappend # do not overwrite history
+#shopt -s expand_aliases # expand aliases
+
+[[ -f ~/.bashrc-personal ]] && . ~/.bashrc-personal
+[[ -f ~/.aliases.all ]] && . ~/.aliases.all 
+
+neofetch
 chuck
+
