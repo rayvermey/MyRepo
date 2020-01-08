@@ -10,19 +10,18 @@ case $class in
 	(Gimp*) echo follow=on;;
 	(Gitk) echo state=floating\ layer=normal;;
 	(MPlayer) echo state=floating\ layer=normal;;
-	(Spotify) echo desktop=^15;;
-	(TelegramDesktop) echo desktop=^13;;
+	([Ss]potify) echo desktop=^9;;
 	(XCalc) echo state=floating\ layer=normal;;
 	(Xmessage) echo state=floating\ layer=normal;;
 	([lL]ibre[oO]ffice*) echo state=tiled\ layer=normal;;
 	(mpv) echo state=floating\ layer=normal;;
 	('')
 		case $(ps -p "$(xdo pid $id)" -o comm= 2>/dev/null) in
-			(spotify) echo desktop=^15;;
+			(spotify) echo desktop=^9;;
 		esac;;
 esac;
 
-FLOATING_DESKTOP_ID=$(bspc query -D -d '^13')
-desk_id=$(bspc query -D -d "${5:-focused}")
+#FLOATING_DESKTOP_ID=$(bspc query -D -d '^13')
+#desk_id=$(bspc query -D -d "${5:-focused}")
 
-[ "$FLOATING_DESKTOP_ID" = "$desk_id" ] && echo "state=floating"
+#[ "$FLOATING_DESKTOP_ID" = "$desk_id" ] && echo "state=floating"

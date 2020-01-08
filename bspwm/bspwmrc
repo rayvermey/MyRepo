@@ -1,13 +1,15 @@
-#! /bin/sh
-
 #!/bin/sh
-xrandr --output VGA-0 --mode 1920x1080 --pos 0x0 --rotate normal --output DVI-D-0 --off --output HDMI-0 --primary --mode 1920x1080 --pos 1920x0 --rotate normal --output DVI-D-1 --off
+xrandr --output VGA-1 --mode 1920x1080 --pos 0x0 --rotate normal --output DVI-D-0 --off --output HDMI-1 --primary --mode 1920x1080 --pos 1920x0 --rotate normal --output DVI-D-1 --off
 
-bspc monitor VGA-0 -d 0 1 2 3 4 5 6 7 8 9  
-bspc monitor HDMI-0 -d  A B C D E F G H I J
+bspc monitor VGA-1 -d 1 2 3 4 5 
+bspc monitor HDMI-1 -d  A B C D E F G
+
+
+#fix for moving spotify to specific workspace
+bspc config external_rules_command ~/.config/bspwm/scripts/external_rules_command
 
 bspc config border_width         2
-bspc config window_gap          12
+bspc config window_gap           8
 
 bspc config split_ratio          0.52
 bspc config borderless_monocle   true
@@ -16,25 +18,17 @@ bspc config gapless_monocle      true
 bspc config external_rules_command "/home/ray/.config/bspwm/scripts/bspwm-rules";
 bspc config external_rules_command "/home/ray/.config/bspwm/scripts/float.sh";
 
-bspc rule -a Gimp desktop='^14' state=floating follow=on
+bspc rule -a Gimp desktop='^7' follow=on
 bspc rule -a mplayer2 state=floating
-bspc rule -a Kupfer.py focus=on
 bspc rule -a Screenkey manage=off
-bspc rule -a Vivaldi-snapshot desktop='^11'
-bspc rule -a dolphin desktop = '^0'
-bspc rule -a Spotify desktop = '^15'
-bspc rule -a cantata desktop = '^15'
-bspc rule -a ICE-SSB-facebook desktop = '^16'
-bspc rule -a ICE-SSB-whatsapp desktop = "^13"
-bspc rule -a TelegramDesktop desktop = "^13"
-bspc rule -a Slack desktop = '^13'
-bspc rule -a discord desktop = '^13'
-bspc rule -a Caprine desktop = '^13' 
-bspc rule -a ICE-SSB-evernote desktop = '^19'
-bspc rule -a ICE-SSB-quora desktop = '^18'
-bspc rule -a ICE-SSB-trello desktop = '^17'
-bspc rule -a ICE-SSB-todoist desktop = '^17'
+bspc rule -a Vivaldi-stable desktop='^6'
+bspc rule -a "xterm gotop" desktop = '^1'
+bspc rule -a "[Ss]potify"  desktop = '^9'
+#bspc rule -a Hexchat = '^13'
+#bspc rule -a ICE-SSB-facebook desktop = '^16'
+bspc rule -a Station desktop = '^10'
 
 $HOME/.config/bspwm/autostart.sh
 $HOME/.config/polybar/launch.sh
 
+bspc rule -a Ulauncher border=off

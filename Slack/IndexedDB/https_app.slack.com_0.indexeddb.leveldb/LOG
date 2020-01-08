@@ -1,6 +1,0 @@
-2019/08/02-09:11:02.667 1263 Reusing MANIFEST /home/ray/.config/Slack/IndexedDB/https_app.slack.com_0.indexeddb.leveldb/MANIFEST-000001
-2019/08/02-09:11:02.668 1263 Recovering log #48
-2019/08/02-09:11:02.675 1263 Reusing old log /home/ray/.config/Slack/IndexedDB/https_app.slack.com_0.indexeddb.leveldb/000048.log 
-2019/08/02-13:11:24.555 19821 Level-0 table #52: started
-2019/08/02-13:11:24.579 19821 Level-0 table #52: 947419 bytes OK
-2019/08/02-13:11:24.585 19821 Delete type=0 #48
