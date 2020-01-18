@@ -1,7 +1,7 @@
 #!/bin/bash
 
 function run {
-  if ! pgrep -f $1 ;
+  if ! pgrep -f "$1" ;
   then
     $@&
   fi
@@ -12,11 +12,11 @@ run "nm-applet"
 run "variety"
 run "blueberry-tray"
 run "/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1"
-run "numlockx on"
+run "numlockx off"
 run "volumeicon"
-#run "conky -c $HOME/.config/awesome/system-overview"
+run "conky -c $HOME/.config/awesome/system-overview"
+run "/home/ray/scripts/start_network_monitors.sh"
 
-run "termite -e gotop"
 run "compton"
 run "spotify"
 run "autokey-gtk"
@@ -25,10 +25,18 @@ run "copyq"
 run "dunst"
 run "mpd"
 run sxhkd -c ~/.config/bspwm/sxhkd/sxhkdrc 
-run "vivaldi-stable"
+run "vivaldi-snapshot"
 run "/home/ray/scripts/tmp_bspwm_adaptive_marked_border"
 run "pcloud &"
 run "station"
+#run "/home/ray/scripts/whatsapp.sh"
+#run "/home/ray/scripts/evernote.sh"
+#run caprine
+#run todoist
+#run telegram-desktop
+#run slack
+#run discord
+
 
 xsetroot -cursor_name left_ptr &                                                                                                
 sleep 1

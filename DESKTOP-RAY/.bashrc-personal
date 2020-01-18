@@ -1,0 +1,4 @@
+export PATH=$PATH:/home/ray/scripts
+alias t='cat ~/.todo'
+alias ta='echo "$@" >> ~/.todo'
+source /home/ray/.aliases.all

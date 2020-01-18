@@ -19,7 +19,7 @@ super + F3
     inkscape
 
 #Gimp
-super + F4
+super + g
     gimp
 
 #Meld
@@ -32,7 +32,7 @@ super + F6
 
 #Virtualbox
 super + F7
-    virtualbox
+    /home/ray/scripts/startvb.sh
 
 #Thunar
 super + F8
@@ -40,7 +40,7 @@ super + F8
 
 #Evolution
 super + F9
-    evolution
+    /home/ray/scripts/startnemo.sh
 
 #Spotify
 super + F10
@@ -49,6 +49,26 @@ super + F10
 #Rofi Fullscreen
 super + F11
     rofi -show run -fullscreen
+
+#Activate Virtual-Box
+F7
+	xdo activate -N "VirtualBox Machine"
+
+#Activate Nemo
+F9
+	xdo activate -N "Nemo"
+
+#Activate Station
+F10
+	xdo activate -N "Station"
+
+#Activate Termite
+F11 
+	xdo activate -N "Termite"
+
+#Activate Vivaldi
+F12
+	xdo activate -N "Vivaldi-snapshot"
 
 #Rofi
 super + F12
@@ -59,8 +79,8 @@ super + F12
 #################################################################
 
 #Atom
-super + e
-    atom
+super + {_,shift +} + e
+   bspc node {@/,@parent} {--equalize,--balance}
 
 #Browser
 super + w
@@ -70,16 +90,8 @@ super + w
 super + c
     conky-toggle
 
-#Htop
-super + h
-    urxvt 'htop task manager' -e htop
-
 #Oblogout
 super + x
-    oblogout
-
-#Oblogout
-super + Pause
     oblogout
 
 #Oblogout
@@ -102,7 +114,7 @@ super + v
 
 #Pragha
 super + m
-    pragha
+    clementine
 
 #Termite
 super + Return
@@ -123,7 +135,7 @@ super + Escape
 
 #File-Manager
 super + shift + Return
-	thunar
+	nemo
 
 #Keyboard dependent
 #File-Manager
@@ -159,9 +171,6 @@ ctrl + alt + Prior
 #Atom
 ctrl + alt + w
      atom
-#File-Manager
-ctrl + alt + b
-     thunar
 
 #Catfish
 ctrl + alt + c
@@ -171,10 +180,6 @@ ctrl + alt + c
 ctrl + alt + g
     chromium -no-default-browser-check
 
-#Evolution
-ctrl + alt + e
-     evolution
-
 #Firefox
 ctrl + alt + f
      firefox
@@ -183,25 +188,13 @@ ctrl + alt + f
 ctrl + alt + i
      nitrogen
 
-#slim-lock
-ctrl + alt + k
-     slimlock
-
 #Slimlock
 ctrl + alt + l
-    slimlock
-
-#Slimlock
-super + k
     slimlock
 
 #Pamac-manager
 ctrl + alt + p
     pamac-manager
-
-#Xfce4-settings-manager
-ctrl + alt + m
-     xfce4-settings-manager
 
 #Pulse Audio Control
 ctrl + alt + u
@@ -215,17 +208,13 @@ ctrl + alt + r
 ctrl + alt + s
    spotify
 
-#Termite
-ctrl + alt + Return
-    termite
-
 #Nemo
 ctrl + alt + t
     nemo
 
 #Vivaldi
 ctrl + alt + v
-    vivaldi-stable
+    vivaldi-snapshot
 
 #Xfce4-appfinder
 ctrl + alt + a
@@ -258,29 +247,9 @@ alt + p
 alt + f
     variety -f
 
-#Wallpaper previous
-alt + Left
-    variety -p
-
-#Wallpaper next
-alt + Right
-    variety -n
-
-#Wallpaper toggle-pause
-alt + Up
-    variety --toggle-pause
-
-#Wallpaper resume
-alt + Down
-    variety --resume
-
 #Gmrun
 alt + F2
     gmrun
-
-#Xfce4-appfinder
-alt + F3
-    xfce4-appfinder
 
 
 #################################################################
@@ -338,8 +307,9 @@ ctrl + shift + Print
 #################################################################
 
 #xfce4-terminal dropdown
-F12
+ctrl + F12
     xfce4-terminal --drop-down
+
 
 
 #################################################################
@@ -446,7 +416,8 @@ super + Tab
 	bspc desktop -f '^{1-9,10,11,12}'
 
 # Increase/decrease window gap on focused desktop
-super + bracket{left,right}
+	#super + bracket{left,right}
+	super + {plus,minus}
 	bspc config -d focused window_gap $((`bspc config -d focused window_gap` {-,+} 5 ))
 
 # set the window state
@@ -454,7 +425,7 @@ super + space
 	bspc node -t {tiled,pseudo_tiled,floating,fullscreen}
 
 # Move focus to other monitor
-super + BackSpace
+	super + BackSpace
 		bspc monitor -f next
 
 #################################################################
@@ -591,23 +562,15 @@ ctrl + alt + Down
 
 #Switch here between qwerty and azerty or make new one
 #Focus selected desktop FOR QWERTY KEYBOARDS
-super + {1-9,0,parenleft,parenright}
+super + {1-9,0,bracketleft,bracketright}
 	bspc desktop -f '^{1-9,10,11,12}'
-
-#Focus selected desktop	FOR AZERTY KEYBOARDS
-#super + {ampersand,eacute,quotedbl,apostrophe,parenleft,section,egrave,exclam,ccedilla,agrave}
-#    bspc desktop -f '^{1-9,10}'
 
 #################################################################
 
 #Switch here between qwerty and azerty or make new one
 #Move window to selected desktop FOR QWERTY KEYBOARDS
 #super + shift + {1-9,0}
-super + shift + {1-9,0,bracketleft,bracketright}
+super + shift + {1-9,0,braceleft,braceright}
     id=$(bspc query -N -n); bspc node -d ^{1-9,10,11,12}; bspc node -f ${id}}
-
-#Move window to selected desktop FOR AZERTY KEYBOARDS
-#super + shift + {ampersand,eacute,quotedbl,apostrophe,parenleft,section,egrave,exclam,ccedilla,agrave}
-#    id=$(bspc query -N -n); bspc node -d ^{1-9,10}; bspc node -f ${id}}
 
 #################################################################

@@ -20,7 +20,6 @@ case $class in
 			(spotify) echo desktop=^9;;
 		esac;;
 esac;
-
 #FLOATING_DESKTOP_ID=$(bspc query -D -d '^13')
 #desk_id=$(bspc query -D -d "${5:-focused}")
 

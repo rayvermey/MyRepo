@@ -37,8 +37,8 @@ alias l='ls'
 alias la='ls -a'
 alias lal='ls -al'
 alias ll='ls -la'
-alias ls='() { $(whence -p gls) -Ctr --file-type --color=auto $@ }'
-#alias ls='ls --color=auto'
+#alias ls='() { $(whence -p gls) -Ctr --file-type --color=auto $@ }'
+alias ls='ls --color=auto'
 alias manjaro="tmux new-window -n Nova_Manjaro 'ssh Nova_Manjaro'"
 alias merge="xrdb -merge ~/.Xresources"
 alias microcode='grep . /sys/devices/system/cpu/vulnerabilities/*'
@@ -56,19 +56,20 @@ alias ps="ps auxf"
 alias psgrep="ps aux | grep -v grep | grep -i -e VSZ -e"
 alias pu='() { pushd $1 &> /dev/null; dirs -v; }'
 alias r="ranger"
-alias rip="expac --timefmt='%Y-%m-%d %T' '%l\t%n %v' | sort | tail -100"
+alias rip="expac --timefmt='%Y-%m-%d %T' '%l\t%n %v' | sort | tail -1000"
 alias rm='rm -v'
 alias skel='cp -rf /etc/skel/* ~'
 alias t='cat ~/.todo'
 alias ta='echo "$@" >> ~/.todo'
 alias trizenskip='trizen -S --skipinteg'
 alias unlock="sudo rm /var/lib/pacman/db.lck"
+alias upall="yay -Syu"
 alias update-grub="sudo grub-mkconfig -o /boot/grub/grub.cfg"
-alias update='bupskel && sudo pacman -Syyau && bupskel'
+alias update='bupskel && sudo pacman -Syyu && bupskel'
 alias userlist="cut -d: -f1 /etc/passwd"
 alias vbm="sudo mount -t vboxsf -o rw,uid=1000,gid=1000 Public /home/$USER/Public"
 alias vi="vim"
-alias vim='() { $(whence -p nvim) $@ }'
+#alias vim='() { $(whence -p nvim) $@ }'
 alias wget="wget -c"
 alias yayskip='yay -S --mflags --skipinteg'
 alias yta-aac="youtube-dl --extract-audio --audio-format aac "
@@ -83,3 +84,16 @@ alias ytv-best="youtube-dl -f bestvideo+bestaudio "
 #shopt -s expand_aliases # expand aliases
 #shopt -s expand_aliases # expand aliases
 #zplug "plugins/common-aliases",    from:oh-my-zsh
+alias td="tdel.sh"
+alias tu="tupd.sh"
+alias shopt="/usr/bin/shopt"
+alias vib="vim /home/ray/.config/bspwm/bspwmrc"
+alias via="vim /home/ray/.config/bspwm/autostart.sh"
+alias vial="vim /home/ray/.aliases.all"
+alias vip="vim /home/ray/.config/polybar/config"
+alias visx="vim /home/ray/.config/bspwm/sxhkd/sxhkdrc"
+alias viz="vim /home/ray/.zshrc"
+alias vibr="vim /home/ray/.bashrc"
+alias cdb="cd /home/ray/.config/bspwm"
+alias cdp="cd /home/ray/.config/polybar"
+alias cdsx="cd /home/ray/.config/sxhkd"
