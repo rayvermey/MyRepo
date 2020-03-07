@@ -2,11 +2,12 @@
 
 import sys
 import dbus
+import os
 from operator import itemgetter
 import argparse
 import re
 from urllib.parse import unquote
-
+import time
 from dbus.mainloop.glib import DBusGMainLoop
 from gi.repository import GLib
 DBusGMainLoop(set_as_default=True)
@@ -22,14 +23,21 @@ class PlayerManager:
         self.blacklist = blacklist
         self._connect = connect
         self._session_bus = dbus.SessionBus()
-        self._last_status = ''
         self.players = {}
+
+        self.print_queue = []
+        self.connected = False
+        self.player_states = {}
+        
         self.refreshPlayerList()
 
         if self._connect:
             self.connect()
             loop = GLib.MainLoop()
-            loop.run()
+            try:
+                loop.run()
+            except KeyboardInterrupt:
+                print("interrupt received, stopping…")
     
     def connect(self):
         self._session_bus.add_signal_receiver(self.onOwnerChangedName, 'NameOwnerChanged')
@@ -50,9 +58,12 @@ class PlayerManager:
         player_bus_names = [ bus_name for bus_name in self._session_bus.list_names() if self.busNameIsAPlayer(bus_name) ]
         for player_bus_name in player_bus_names:
             self.addPlayer(player_bus_name)
+        if self.connected != True:
+            self.connected = True
+            self.printQueue()
 
     def addPlayer(self, bus_name, owner = None):
-        player = Player(self._session_bus, bus_name, owner = owner, connect = self._connect)
+        player = Player(self._session_bus, bus_name, owner = owner, connect = self._connect, _print = self.print)
         self.players[player.owner] = player
         
     def removePlayer(self, owner):
@@ -62,7 +73,7 @@ class PlayerManager:
             _printFlush(ICON_NONE)
 
     def changePlayerOwner(self, bus_name, old_owner, new_owner):
-        player = Player(self._session_bus, bus_name, owner = new_owner, connect = self._connect)
+        player = Player(self._session_bus, bus_name, owner = new_owner, connect = self._connect, _print = self.print)
         self.players[new_owner] = player
         del self.players[old_owner]
     
@@ -71,7 +82,7 @@ class PlayerManager:
         players = [
             {
                 'number': int(owner.split('.')[-1]),
-                'status': 0 if player.status == 'playing' else 1 if player.status == 'paused' else 2,
+                'status': 2 if player.status == 'playing' else 1 if player.status == 'paused' else 0,
                 'owner': owner
             }
             for owner, player in self.players.items()
@@ -86,14 +97,32 @@ class PlayerManager:
                 self.players[player_owner].status == 'playing' or
                 self.players[player_owner].status == 'paused'
         ]
-        return self.players[playing_players[-1]] if playing_players else None
+        return self.players[playing_players[0]] if playing_players else None
+
+    def print(self, status, player):
+        self.player_states[player.bus_name] = status
+
+        if self.connected:
+            current_player = self.getCurrentPlayer()
+            if current_player != None:
+                _printFlush(self.player_states[current_player.bus_name])
+            else:
+                _printFlush(ICON_STOPPED)
+        else:
+            self.print_queue.append([status, player])
+    
+    def printQueue(self):
+        for args in self.print_queue:
+            self.print(args[0], args[1])
+        self.print_queue.clear()
 
 
 class Player:
-    def __init__(self, session_bus, bus_name, owner = None, connect = True):
+    def __init__(self, session_bus, bus_name, owner = None, connect = True, _print = None):
         self._session_bus = session_bus
         self.bus_name = bus_name
         self._disconnecting = False
+        self.__print = _print
 
         self.metadata = {
             'artist' : '',
@@ -189,19 +218,42 @@ class Player:
             ICON_PAUSED if self.status == 'playing' else
             ICON_PLAYING
         )
+    
+    def _print(self, status):
+        self.__print(status, self)
 
     def _parseMetadata(self):
         if self._metadata != None:
-            self.metadata['artist'] = re.sub(SAFE_TAG_REGEX, """\1\1""", _getProperty(self._metadata, 'xesam:artist', [''])[0])
+            artist = _getProperty(self._metadata, 'xesam:artist', [''])
+            if len(artist):
+                self.metadata['artist'] = re.sub(SAFE_TAG_REGEX, """\1\1""", artist[0])
+            else:
+                self.metadata['artist'] = ''
             self.metadata['album']  = re.sub(SAFE_TAG_REGEX, """\1\1""", _getProperty(self._metadata, 'xesam:album', ''))
             self.metadata['title']  = re.sub(SAFE_TAG_REGEX, """\1\1""", _getProperty(self._metadata, 'xesam:title', ''))
             self.metadata['track']  = _getProperty(self._metadata, 'xesam:trackNumber', '')
-            self.metadata['length'] = _getProperty(self._metadata, 'xesam:length', '')
-            self.metadata['genre']  = _getProperty(self._metadata, 'xesam:genre', '')
-            self.metadata['disc']   = _getProperty(self._metadata, 'xesam:discNumber', '')
-            self.metadata['date']   = re.sub(SAFE_TAG_REGEX, """\1\1""", _getProperty(self._metadata, 'xesam:contentCreated', ''))
-            self.metadata['year']   = re.sub(SAFE_TAG_REGEX, """\1\1""", self.metadata['date'][0:4])
-            self.metadata['cover']  = re.sub(SAFE_TAG_REGEX, """\1\1""", _getProperty(self._metadata, 'xesam:artUrl', ''))
+            length = str(_getProperty(self._metadata, 'xesam:length', ''))
+            if not len(length):
+                length = str(_getProperty(self._metadata, 'mpris:length', ''))
+            if len(length):
+                self.metadata['length'] = int(length)
+            else:
+                self.metadata['length'] = 0
+            self.metadata['genre']    = _getProperty(self._metadata, 'xesam:genre', '')
+            self.metadata['disc']     = _getProperty(self._metadata, 'xesam:discNumber', '')
+            self.metadata['date']     = re.sub(SAFE_TAG_REGEX, """\1\1""", _getProperty(self._metadata, 'xesam:contentCreated', ''))
+            self.metadata['year']     = re.sub(SAFE_TAG_REGEX, """\1\1""", self.metadata['date'][0:4])
+            self.metadata['url']      = _getProperty(self._metadata, 'xesam:url', '')
+            self.metadata['filename'] = os.path.basename(self.metadata['url'])
+            cover = _getProperty(self._metadata, 'xesam:artUrl', '')
+            if not len(cover):
+                cover = _getProperty(self._metadata, 'mpris:artUrl', '')
+            if len(cover):
+                self.metadata['cover'] = re.sub(SAFE_TAG_REGEX, """\1\1""", cover)
+            else:
+                self.metadata['cover'] = ''
+
+            self.metadata['duration'] = _getDuration(self.metadata['length']) 
     
     def onMetadataChanged(self, track_id, metadata):
         self.refreshMetadata()
@@ -231,6 +283,12 @@ class Player:
         formatlen = match.group('formatlen')
         text = match.group('text')
         tag_found = False
+        reversed_tag = False
+        
+        if tag.startswith('-'):
+            tag = tag[1:]
+            reversed_tag = True
+        
         if format is None:
             tag_is_format_match = re.match(FORMAT_TAG_REGEX, tag)
             if tag_is_format_match:
@@ -245,9 +303,12 @@ class Player:
             elif format == 't':
                 formatlen = int(formatlen)
                 if len(text) > formatlen:
-                    text = text[:max(formatlen - 3, 0)] + '...'
+                    text = text[:max(formatlen - len(TRUNCATE_STRING), 0)] + TRUNCATE_STRING
         if tag_found is False and tag in metadata and len(metadata[tag]):
             tag_found = True
+
+        if reversed_tag:
+            tag_found = not tag_found
 
         if tag_found:
             return text
@@ -256,12 +317,17 @@ class Player:
 
     def printStatus(self):
         if self.status in [ 'playing', 'paused' ]:
-            if self.metadata['title']:
-                metadata = { **self.metadata, 'icon': self.icon, 'icon-reversed': self.icon_reversed }
-                text = re.sub(FORMAT_REGEX, lambda match: self._statusReplace(match, metadata), FORMAT_STRING)
-                _printFlush(re.sub(r'􏿿p􏿿(.*?)􏿿p􏿿(.*?)􏿿p􏿿(.*?)􏿿p􏿿', r'%{\1}\2%{\3}', text.format_map(CleanSafeDict(**metadata))))
-            return
-        _printFlush(ICON_STOPPED)
+            metadata = { **self.metadata, 'icon': self.icon, 'icon-reversed': self.icon_reversed }
+            # replace metadata tags in text
+            text = re.sub(FORMAT_REGEX, lambda match: self._statusReplace(match, metadata), FORMAT_STRING)
+            # restore polybar tag formatting and replace any remaining metadata tags after that
+            try:
+                text = re.sub(r'􏿿p􏿿(.*?)􏿿p􏿿(.*?)􏿿p􏿿(.*?)􏿿p􏿿', r'%{\1}\2%{\3}', text.format_map(CleanSafeDict(**metadata)))
+            except:
+                print("Invalid format string")
+            self._print(text)
+        else:
+            self._print(ICON_STOPPED)
 
 
 def _dbusValueToPython(value):
@@ -300,6 +366,10 @@ def _getProperty(properties, property, default = None):
     else:
         return value
 
+def _getDuration(t: int):
+        seconds = t / 1000000
+        return time.strftime("%M:%S", time.gmtime(seconds))
+
 
 class CleanSafeDict(dict):
     def __missing__(self, key):
@@ -329,14 +399,16 @@ parser.add_argument('-b', '--blacklist', help="ignore a player by it's bus name.
                     action='append',
                     metavar="BUS_NAME",
                     default=[])
-parser.add_argument('-f', '--format', default='{icon} {artist} - {title}')
-parser.add_argument('--icon-playing', default='')
-parser.add_argument('--icon-paused', default='')
-parser.add_argument('--icon-stopped', default='')
+parser.add_argument('-f', '--format', default='{icon} {:artist:{artist} - :}{:title:{title}:}{:-title:{filename}:}')
+parser.add_argument('--truncate-text', default='…')
+parser.add_argument('--icon-playing', default='⏵')
+parser.add_argument('--icon-paused', default='⏸')
+parser.add_argument('--icon-stopped', default='⏹')
 parser.add_argument('--icon-none', default='')
 args = parser.parse_args()
 
 FORMAT_STRING = re.sub(r'%\{(.*?)\}(.*?)%\{(.*?)\}', r'􏿿p􏿿\1􏿿p􏿿\2􏿿p􏿿\3􏿿p􏿿', args.format)
+TRUNCATE_STRING = args.truncate_text
 ICON_PLAYING = args.icon_playing
 ICON_PAUSED = args.icon_paused
 ICON_STOPPED = args.icon_stopped

@@ -10,18 +10,16 @@
 ;                                                ;
 ;-------------------------------------------------
 [colors]
-#format-foreground = #FF0000
-#format-background = #00FF00
+format-foreground = #FF0000
+format-background = #00FF00
 #background = #2F343F
 #foreground = #f3f4f5
-background = ${xrdb:color2}
 foreground = ${xrdb:color1}
-primary = ${xrdb:color1:#222}
-secondary = ${xrdb:color2:#222}
-alert = ${xrdb:color3:#222}
+background = ${xrdb:color2}
 blue  = #244E64 
 white = #FFFFFF
 red = #f70d1a
+alert = #f70d1a
 
 
 
@@ -31,7 +29,7 @@ red = #f70d1a
 ;                                                ;
 ;-------------------------------------------------
 [bar/VGA]
-monitor = VGA-0
+monitor = VGA-1
 width = 100%
 height = 20
 offset-x = 0%
@@ -47,8 +45,6 @@ tray-offset-x =
 
 background = ${colors.background}
 foreground = ${colors.foreground}
-#background = ${xrdb:color2}
-#foreground = ${xrdb:color1}
 
 border-size = 0
 border-color = ${colors.foreground}
@@ -63,7 +59,7 @@ font-3 = "Font Awesome 5 Brands Free Regular:style=Regular"
 
 [bar/HDMI]
 enable-ipc = true
-monitor = HDMI-0
+monitor = HDMI-1
 #override-redirect = true
 wm-restack = bspwm
 width = 100%
@@ -75,8 +71,6 @@ fixed-center = true
 
 background = ${colors.background}
 foreground = ${colors.foreground}
-#foreground = ${xrdb:color1}
-#background = ${xrdb:color2}
 
 border-size = 0
 border-color = ${colors.foreground}
