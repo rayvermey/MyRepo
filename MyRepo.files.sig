@@ -1,1 +1,0 @@
-MyRepo.files.tar.gz.sig
